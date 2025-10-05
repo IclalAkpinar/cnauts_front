@@ -1,0 +1,77 @@
+@keyframes scrollToBlock {
+ from {
+  scale: 0.9;
+  opacity: 0.5;
+ }
+ to {
+  scale: 1;
+  opacity: 1;
+ }
+}
+
+.transition-effect {
+ animation: scrollToBlock ease-in-out;
+ animation-timeline: view(97vh 0px);
+}
+
+.transition-effect-small {
+ animation: scrollToBlock ease-in-out;
+ animation-timeline: view(80vh 0px);
+}
+
+.top-radial-gradient {
+ background: radial-gradient(circle at 0% 0%, #b0b1b520 0, transparent 70%),
+  radial-gradient(circle at 90% 50%, #b0b1b520 0, transparent 30%),
+  radial-gradient(circle at 10% 70%, #b0b1b520 0, transparent 30%),
+  radial-gradient(circle at 90% 90%, #b0b1b520 0, transparent 30%);
+}
+
+@media (min-width: 640px) {
+ .dark-about-section {
+  background: radial-gradient(circle at 75% 50%, transparent , #01010f 50%);
+ }
+}
+
+@media (max-width: 640px) {
+ .dark-about-section {
+  background: radial-gradient(circle at 50% 50%, transparent , #01010f );
+ }
+}
+@media (min-width: 640px) {
+ .dark-national-tech-section {
+  background: radial-gradient(ellipse at 50% 50%, transparent , #01010f 75%);
+ }
+}
+
+@media (max-width: 640px) {
+ .dark-national-tech-section {
+  background: radial-gradient(ellipse at 50% 50%, transparent , #01010f );
+ }
+}
+
+
+.triangle{
+  clip-path: polygon(100% 0,100% 100%, 0 50%);
+}
+
+
+.custom-menu.ant-menu-horizontal > .ant-menu-item::after {
+  border-bottom: 2px solid #BA2038 !important;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-menu.ant-menu-horizontal > .ant-menu-item:hover::after {
+  border-bottom: 2px solid #BA2038 !important;
+  opacity: 1;
+}
+
+.custom-menu.ant-menu-horizontal > .ant-menu-item-selected::after {
+  border-bottom: 2px solid #BA2038 !important;
+  opacity: 1;
+}
+
+.custom-menu.ant-menu-horizontal > .ant-menu-item-selected {
+  color: inherit !important;
+}
+
