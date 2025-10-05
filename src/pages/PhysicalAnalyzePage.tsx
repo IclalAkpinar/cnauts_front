@@ -472,10 +472,31 @@ const PhysicalAnalyzePage = () => {
                         </h3>
 
                         {(() => {
+                            // Python test kodundaki gibi gerçekçi EMG verisi oluştur
+                            const duration = 5; // saniye
+                            const samplingRate = 1000; // Hz
+                            const nSamples = duration * samplingRate;
+                            
+                            // Pre-exercise: Düşük yorgunluk (low fatigue)
+                            const preExercise = Array.from({ length: nSamples }, (_, i) => {
+                                const t = i / samplingRate;
+                                const signal = 0.5 * Math.sin(2 * Math.PI * 50 * t);
+                                const noise = 0.2 * (Math.random() - 0.5) * 2;
+                                return Number((signal + noise).toFixed(3));
+                            });
+                            
+                            // Post-exercise: Yüksek yorgunluk (high fatigue)
+                            const postExercise = Array.from({ length: nSamples }, (_, i) => {
+                                const t = i / samplingRate;
+                                const signal = 1.2 * Math.sin(2 * Math.PI * 30 * t);
+                                const noise = 0.4 * (Math.random() - 0.5) * 2;
+                                return Number((signal + noise).toFixed(3));
+                            });
+
                             const payload = {
                                 emg_data: {
-                                    pre_exercise: Array.from({ length: 5000 }, (_, i) => Number((Math.sin(i / 100) * 0.3).toFixed(3))),
-                                    post_exercise: Array.from({ length: 5000 }, (_, i) => Number((Math.sin(i / 100) * 0.6).toFixed(3))),
+                                    pre_exercise: preExercise,
+                                    post_exercise: postExercise,
                                 },
                                 exercise_type: "squat",
                                 duration_minutes: 30,
@@ -485,12 +506,40 @@ const PhysicalAnalyzePage = () => {
                             return (
                                 <>
                                     <p className="text-gray-300 mb-2">
-                                        Backend'e gönderilecek örnek veriler aşağıda gösterilmektedir:
+                                        Backend'e gönderilecek örnek veriler (Python test koduyla uyumlu):
                                     </p>
-
-                                    <div className="bg-black/50 border border-blue-700 rounded-lg p-3 text-sm text-gray-200 font-mono max-h-52 overflow-y-auto mb-4">
-                                        <pre>{JSON.stringify(payload, null, 2)}</pre>
+                                    
+                                    <div className="bg-gray-800/50 border border-blue-600 rounded-lg p-4 mb-4">
+                                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-300">
+                                            <div>
+                                                <p className="font-semibold text-blue-300">Pre-Exercise EMG:</p>
+                                                <p className="text-xs">• 5000 samples (5 saniye @ 1000Hz)</p>
+                                                <p className="text-xs">• Düşük yorgunluk (50Hz sinyal)</p>
+                                                <p className="text-xs">• Amplitude: 0.5, Noise: 0.2</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-red-300">Post-Exercise EMG:</p>
+                                                <p className="text-xs">• 5000 samples (5 saniye @ 1000Hz)</p>
+                                                <p className="text-xs">• Yüksek yorgunluk (30Hz sinyal)</p>
+                                                <p className="text-xs">• Amplitude: 1.2, Noise: 0.4</p>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    <details className="mb-4">
+                                        <summary className="cursor-pointer text-sm text-gray-400 hover:text-white">
+                                            📋 Payload'ı Görüntüle (JSON)
+                                        </summary>
+                                        <div className="bg-black/50 border border-blue-700 rounded-lg p-3 text-xs text-gray-200 font-mono max-h-52 overflow-y-auto mt-2">
+                                            <pre>{JSON.stringify({
+                                                ...payload,
+                                                emg_data: {
+                                                    pre_exercise: `[${preExercise.slice(0, 5).join(', ')}... ${nSamples} samples]`,
+                                                    post_exercise: `[${postExercise.slice(0, 5).join(', ')}... ${nSamples} samples]`
+                                                }
+                                            }, null, 2)}</pre>
+                                        </div>
+                                    </details>
 
                                     <button
                                         onClick={async () => {
@@ -518,9 +567,9 @@ const PhysicalAnalyzePage = () => {
                                                 setLoading(false);
                                             }
                                         }}
-                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition duration-200"
+                                        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition duration-200 w-full"
                                     >
-                                        🚀 Veri Gönder ve Analiz Et
+                                        🚀 Gerçekçi EMG Verisi Gönder ve Analiz Et
                                     </button>
                                 </>
                             );
