@@ -466,11 +466,77 @@ const PhysicalAnalyzePage = () => {
 
                 {/* MOCK Data Warning (Sadece yüklendikten sonra göster) */}
                 {!loading && analysisResult && (
-                     <div className="bg-orange-800/50 p-3 rounded-xl shadow-inner mb-4 text-white border border-orange-500">
-                        <p className="text-sm font-bold">⚠️ MOCK DATA WARNING: </p>
-                        <p className="text-xs">
-                            Yerel API'nize **{API_URL}** adresinden erişim (CORS hatası nedeniyle) engellendi. Gördüğünüz veriler, frontend mantığını doğrulamak için kullanılan **simüle edilmiş Mock verilerdir**.
-                        </p>
+                     <div className="">
+{/* ============================================================
+     🔬 Yorgunluk Analizi API Test Client
+============================================================ */}
+<div className="bg-blue-900/40 border border-blue-600 p-5 rounded-xl mb-6">
+  <h3 className="text-xl font-bold text-blue-300 mb-3">
+    Yorgunluk Analizi API Test Client
+  </h3>
+
+  {/* Gönderilecek verileri önceden tanımlıyoruz */}
+  {(() => {
+    const payload = {
+      emg_data: {
+        pre_exercise: Array.from({ length: 5000 }, (_, i) => Number((Math.sin(i / 100) * 0.3).toFixed(3))),
+        post_exercise: Array.from({ length: 5000 }, (_, i) => Number((Math.sin(i / 100) * 0.6).toFixed(3))),
+      },
+      exercise_type: "squat",
+      duration_minutes: 30,
+      user_id: "astronaut_001"
+    };
+
+    return (
+      <>
+        <p className="text-gray-300 mb-2">
+          Backend’e gönderilecek örnek veriler aşağıda gösterilmektedir:
+        </p>
+
+        <div className="bg-black/50 border border-blue-700 rounded-lg p-3 text-sm text-gray-200 font-mono max-h-52 overflow-y-auto mb-4">
+          <pre>{JSON.stringify(payload, null, 2)}</pre>
+        </div>
+
+        <button
+          onClick={async () => {
+            try {
+              setLoading(true);
+              setError(null);
+
+              const res = await fetch(`${API_BASE_URL}/fatigue-analysis`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+              });
+
+              if (!res.ok) throw new Error(`HTTP ${res.status}`);
+              const data = await res.json();
+
+              setAnalysisResult(data);
+              const regionAnalysis = data.thermal_analysis?.region_analysis;
+              if (regionAnalysis) {
+                const newStatus = mapApiToMuscleStatus(regionAnalysis);
+                setMuscleStatus(newStatus);
+              }
+
+              alert("✅ Gerçek API verisi başarıyla alındı ve analiz edildi!");
+            } catch (err) {
+              console.error("API Error:", err);
+              setError("Gerçek API isteği başarısız oldu. Backend çalışıyor mu?");
+            } finally {
+              setLoading(false);
+            }
+          }}
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold text-white transition duration-200"
+        >
+          🚀 Veri Gönder ve Analiz Et
+        </button>
+      </>
+    );
+  })()}
+</div>
+
+                       
                     </div>
                 )}
                 {error && (
