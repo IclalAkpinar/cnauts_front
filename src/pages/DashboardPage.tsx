@@ -35,6 +35,7 @@ const DashboardPage: React.FC = () => {
                                 dataKey="stressLevel" 
                                 color="#f87171" 
                                 xAxisKey="time" 
+                                linkTo="/stressAnalyze"
                             />
                         </div>
                         <div className="h-96">

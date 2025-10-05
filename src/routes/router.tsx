@@ -4,6 +4,7 @@ import DashboardPage from "../pages/DashboardPage";
 import PhysicalAnalyzePage from "../pages/PhysicalAnalyzePage";
 import NotFoundPage from "../pages/NotFoundPage";
 import { Layout } from "../layout/Layout";
+import StressAnalyzePage from "../pages/StressAnalyzePage";
 
 export const Router = () => {
   return (
@@ -15,6 +16,8 @@ export const Router = () => {
         <Route path="physicalAnalyze" element={<PhysicalAnalyzePage />} />
         <Route path="404" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route path="stressAnalyze" element={<StressAnalyzePage />} />
+
       </Route>
     </Routes>
   );
