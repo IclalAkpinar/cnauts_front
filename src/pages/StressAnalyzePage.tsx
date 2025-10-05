@@ -154,10 +154,57 @@ const StressAnalyzePage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [showHistory, setShowHistory] = useState(true);
     const [selectedAnalysis, setSelectedAnalysis] = useState<PastAnalysis | null>(null);
+    const [selectedStressType, setSelectedStressType] = useState<'stresli' | 'sakin' | null>(null);
+
+    const generateStressData = (type: 'stresli' | 'sakin') => {
+        const t = Array.from({ length: 42000 }, (_, i) => i / 700);
+        
+        let ecg, eda;
+        
+        if (type === 'stresli') {
+            // Stresli ECG: Yüksek kalp hızı, düzensiz ritim
+            ecg = t.map(time => {
+                const heartRate = 1.5; // Yüksek kalp hızı (normal 1.1)
+                const irregularity = 0.15 * (Math.random() - 0.5); // Daha fazla düzensizlik
+                const baseline = 0.1 * Math.sin(2 * Math.PI * 0.02 * time); // Baseline drift
+                return Math.sin(2 * Math.PI * heartRate * time) + irregularity + baseline;
+            });
+            
+            // Stresli EDA: Yüksek ve değişken cilt iletkenliği
+            eda = t.map(time => {
+                const baseline = 3.5; // Yüksek baseline (normal 2.0)
+                const variation = 0.8 * Math.sin(2 * Math.PI * 0.08 * time); // Daha fazla değişkenlik
+                const noise = 0.2 * (Math.random() - 0.5); // Rastgele dalgalanmalar
+                return baseline + variation + noise;
+            });
+        } else {
+            // Sakin ECG: Normal kalp hızı, düzenli ritim
+            ecg = t.map(time => {
+                const heartRate = 1.0; // Normal kalp hızı
+                const irregularity = 0.03 * (Math.random() - 0.5); // Az düzensizlik
+                return Math.sin(2 * Math.PI * heartRate * time) + irregularity;
+            });
+            
+            // Sakin EDA: Düşük ve stabil cilt iletkenliği
+            eda = t.map(time => {
+                const baseline = 1.8; // Düşük baseline
+                const variation = 0.2 * Math.sin(2 * Math.PI * 0.05 * time); // Az değişkenlik
+                const noise = 0.05 * (Math.random() - 0.5); // Minimal dalgalanma
+                return baseline + variation + noise;
+            });
+        }
+        
+        return { ecg, eda };
+    };
 
     const analyzeStress = async () => {
         if (!userNote.trim()) {
             setError('Lütfen bir not girin');
+            return;
+        }
+
+        if (!selectedStressType) {
+            setError('Lütfen bir durum seçin (Stresli veya Sakin)');
             return;
         }
 
@@ -166,9 +213,7 @@ const StressAnalyzePage: React.FC = () => {
         setShowHistory(false);
 
         try {
-            const t = Array.from({ length: 42000 }, (_, i) => i / 700);
-            const ecg = t.map(time => Math.sin(2 * Math.PI * 1.1 * time) + 0.05 * (Math.random() - 0.5) * 2);
-            const eda = t.map(time => 2.0 + 0.3 * Math.sin(2 * Math.PI * 0.05 * time));
+            const { ecg, eda } = generateStressData(selectedStressType);
 
             const payload = {
                 ecg: ecg,
@@ -240,9 +285,45 @@ const StressAnalyzePage: React.FC = () => {
                         Nasıl Hissediyorsunuz?
                     </h3>
                     <p className="text-sm text-gray-400 mb-4">
-                        Şu anki ruh halinizi, yorgunluk düzeyinizi veya endişelerinizi paylaşın. 
+                        Önce durumunuzu seçin, sonra detayları yazın. 
                         Yapay zeka danışmanınız size özel öneriler sunacak.
                     </p>
+
+                    {/* Durum Seçimi */}
+                    <div className="mb-6">
+                        <label className="block text-sm font-semibold text-gray-300 mb-3">
+                            Şu anki durumunuzu seçin:
+                        </label>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                onClick={() => setSelectedStressType('sakin')}
+                                className={`p-4 rounded-lg border-2 transition-all ${
+                                    selectedStressType === 'sakin'
+                                        ? 'border-green-500 bg-green-900/30 text-green-400'
+                                        : 'border-gray-700 bg-gray-900 text-gray-400 hover:border-green-500/50'
+                                }`}
+                                disabled={isAnalyzing}
+                            >
+                                <div className="text-4xl mb-2">😌</div>
+                                <div className="font-bold text-lg">Sakin</div>
+                                <div className="text-xs mt-1 opacity-80">Normal/Rahat hissediyorum</div>
+                            </button>
+                            
+                            <button
+                                onClick={() => setSelectedStressType('stresli')}
+                                className={`p-4 rounded-lg border-2 transition-all ${
+                                    selectedStressType === 'stresli'
+                                        ? 'border-red-500 bg-red-900/30 text-red-400'
+                                        : 'border-gray-700 bg-gray-900 text-gray-400 hover:border-red-500/50'
+                                }`}
+                                disabled={isAnalyzing}
+                            >
+                                <div className="text-4xl mb-2">😰</div>
+                                <div className="font-bold text-lg">Stresli</div>
+                                <div className="text-xs mt-1 opacity-80">Gergin/Endişeli hissediyorum</div>
+                            </button>
+                        </div>
+                    </div>
                     
                     <textarea
                         value={userNote}
@@ -258,9 +339,9 @@ const StressAnalyzePage: React.FC = () => {
 
                     <button
                         onClick={analyzeStress}
-                        disabled={isAnalyzing || !userNote.trim()}
+                        disabled={isAnalyzing || !userNote.trim() || !selectedStressType}
                         className={`mt-4 w-full md:w-auto px-8 py-3 rounded-lg font-bold text-lg transition-all duration-300 ${
-                            isAnalyzing || !userNote.trim()
+                            isAnalyzing || !userNote.trim() || !selectedStressType
                                 ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
                                 : 'bg-purple-600 hover:bg-purple-500 text-white transform hover:scale-105'
                         }`}
@@ -472,6 +553,8 @@ const StressAnalyzePage: React.FC = () => {
                                     onClick={() => {
                                         setResult(null);
                                         setShowHistory(true);
+                                        setSelectedStressType(null);
+                                        setUserNote('');
                                     }}
                                     className="flex-1 bg-purple-600 hover:bg-purple-500 text-white py-3 rounded-lg transition font-semibold"
                                 >
