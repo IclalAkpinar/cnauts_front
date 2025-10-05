@@ -15,7 +15,7 @@ const WelcomePage: React.FC = () => {
                         Welcome!
                     </p>
                     <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight">
-                        C-NAUTS <span className="text-green-500">HEALTH</span> INTERFACE
+                        NAUTS CORE <span className="text-green-500">HEALTH</span>
                     </h1>
                     
                     <div className="flex justify-center space-x-6">

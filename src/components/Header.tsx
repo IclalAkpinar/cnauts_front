@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({ name, day, showBack }) => {
               </button>
           )}
           <h1 className="text-3xl font-bold text-green-400">
-              C-NAUTS <span className="text-xl font-light text-gray-400">| Orbital Health Platform</span>
+              NAUTS CORE <span className="text-xl font-light text-gray-400">| Orbital Health Platform</span>
           </h1>
       </div>
       <div className="text-right text-gray-300">

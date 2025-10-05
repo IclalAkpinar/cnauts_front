@@ -5,11 +5,11 @@ export const MOCK_DATA = {
   muscleScore: 88,
   
   stressTrend: [
-      { time: '08:00', stressLevel: 55 },
-      { time: '12:00', stressLevel: 62 },
-      { time: '16:00', stressLevel: 85 }, 
-      { time: '20:00', stressLevel: 70 },
-      { time: '24:00', stressLevel: 65 },
+      { time: 'Pzt', stressLevel: 55 },
+      { time: 'Sal', stressLevel: 62 },
+      { time: 'Çar', stressLevel: 85 }, 
+      { time: 'Per', stressLevel: 70 },
+      { time: 'Cum', stressLevel: 65 },
   ],
   fatigueTrend: [
       { day: 'Pzt', activity: 90 },

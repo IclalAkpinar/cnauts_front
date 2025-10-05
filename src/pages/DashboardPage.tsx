@@ -30,7 +30,7 @@ const DashboardPage: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                         <div className="h-96">
                             <TrendChart 
-                                title="🧠 Stress Level: Last 24 Hours" 
+                                title="🧠 Stress Level: Last Datas" 
                                 data={MOCK_DATA.stressTrend} 
                                 dataKey="stressLevel" 
                                 color="#f87171" 
